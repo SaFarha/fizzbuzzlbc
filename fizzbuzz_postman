@@ -1,0 +1,49 @@
+{
+	"info": {
+		"_postman_id": "6a41b40b-a3fe-439c-9fc4-757e5c50ac6a",
+		"name": "fizz buzz",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9160874"
+	},
+	"item": [
+		{
+			"name": "http://localhost:8080/fizzbuzz",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"limit\": 100,\n    \"int1\": 3,\n    \"int2\": 5,\n    \"str1\": \"fizz\",\n    \"str2\": \"buzz\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/fizzbuzz",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"fizzbuzz"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

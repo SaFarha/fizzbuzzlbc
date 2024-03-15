@@ -2,10 +2,12 @@ package handler
 
 import (
 	"encoding/json"
+	"fizzbuzzlbc/database/models"
 	"fizzbuzzlbc/helper"
 	"fizzbuzzlbc/utils"
 	"io/ioutil"
 	"net/http"
+	"sync"
 )
 
 // JSON params of the handler
@@ -24,18 +26,20 @@ type postFizzBuzzHandlerResponse struct {
 
 // used to mock to test the handler correctly
 var (
-	ioutilReadAllPostFizzbuzzHandler  = ioutil.ReadAll
-	jsonUnmarshallPostFizzbuzzHandler = json.Unmarshal
-	jsonMarshallPostFizzbuzzHandler   = json.Marshal
-	helperFizzbuzzPostFizzbuzzHandler = helper.FizzBuzzHelper
+	ioutilReadAllPostFizzbuzzHandler            = ioutil.ReadAll
+	jsonUnmarshallPostFizzbuzzHandler           = json.Unmarshal
+	jsonMarshallPostFizzbuzzHandler             = json.Marshal
+	helperFizzbuzzPostFizzbuzzHandler           = helper.FizzBuzzHelper
+	helperFizzbuzzPostAddRequestStatisticHelper = helper.AddRequestStatisticHelper
 )
 
-// PostFizzbuzzHandler is an POST handler that take postFizzBuzzHandlerParams in body and return the result of
+// PostFizzbuzzHandler is a POST handler that take postFizzBuzzHandlerParams in body and return the result of
 // helper.FizzbuzzHelper or a http error.
-func PostFizzbuzzHandler(response http.ResponseWriter, request *http.Request) {
+func (handler *Handlers) PostFizzbuzzHandler(response http.ResponseWriter, request *http.Request) {
 
 	// Close the body
 	defer request.Body.Close()
+	var wg sync.WaitGroup
 
 	// check body
 	dataBody, err := ioutilReadAllPostFizzbuzzHandler(request.Body)
@@ -61,6 +65,21 @@ func PostFizzbuzzHandler(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		err := helperFizzbuzzPostAddRequestStatisticHelper(handler.ParamRequestRepo, handler.RequestStatRepo, models.FzParamRequest{
+			Limit: *params.Limit,
+			Int1:  *params.Int1,
+			Int2:  *params.Int2,
+			Str1:  *params.Str1,
+			Str2:  *params.Str2,
+		})
+		if nil != err {
+			// log
+		}
+	}()
+
 	resp, err := helperFizzbuzzPostFizzbuzzHandler(helper.FizzBuzzHelperParams{
 		Limit: *params.Limit,
 		Int1:  *params.Int1,
@@ -69,6 +88,7 @@ func PostFizzbuzzHandler(response http.ResponseWriter, request *http.Request) {
 		Str2:  *params.Str2,
 	})
 	if nil != err {
+		wg.Wait()
 		utils.HTTPResponseErrorInJSON(response, http.StatusBadRequest, "Error in parameters: "+err.Error())
 		return
 	}
@@ -77,9 +97,12 @@ func PostFizzbuzzHandler(response http.ResponseWriter, request *http.Request) {
 		Result: resp,
 	})
 	if nil != err {
+		wg.Wait()
 		utils.HTTPResponseErrorInJSON(response, http.StatusInternalServerError, "Unexpected error")
 		return
 	}
+
+	wg.Wait()
 
 	// http return
 	utils.HTTPResponseInJSON(response, http.StatusOK, dataResponse)

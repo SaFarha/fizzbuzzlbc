@@ -1,6 +1,7 @@
 package application
 
 import (
+	"fizzbuzzlbc/configuration"
 	"fizzbuzzlbc/server"
 )
 
@@ -16,11 +17,18 @@ type application struct {
 }
 
 // NewApplication initializes a new Application interface.
-func NewApplication() Application {
+func NewApplication() (Application, error) {
+
+	conf := configuration.LoadConfig()
+
+	srv, err := server.NewServer(conf)
+	if nil != err {
+		return nil, err
+	}
 
 	return &application{
-		srv: server.NewServer("8080"),
-	}
+		srv: srv,
+	}, nil
 
 }
 

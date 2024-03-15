@@ -17,10 +17,10 @@ func TestFizzBuzzHelper(t *testing.T) {
 		if err == nil {
 			t.Errorf("Error must not be nil")
 		}
-		if err != nil && err.Error() != "Int1 need to be greater than 0" {
+		if err != nil && err.Error() != "int1 need to be greater than 0" {
 			t.Errorf(
 				"Error msg not good \nwe need : %s \nand we get: %s\n",
-				"Int1 need to be greater than 0",
+				"int1 need to be greater than 0",
 				err.Error(),
 			)
 		}
@@ -38,10 +38,10 @@ func TestFizzBuzzHelper(t *testing.T) {
 		if err == nil {
 			t.Errorf("Error must not be nil")
 		}
-		if err != nil && err.Error() != "Int2 need to be greater than 0" {
+		if err != nil && err.Error() != "int2 need to be greater than 0" {
 			t.Errorf(
 				"Error msg not good \nwe need : %s \nand we get: %s\n",
-				"Int2 need to be greater than 0",
+				"int2 need to be greater than 0",
 				err.Error(),
 			)
 		}
@@ -59,10 +59,10 @@ func TestFizzBuzzHelper(t *testing.T) {
 		if err == nil {
 			t.Errorf("Error must not be nil")
 		}
-		if err != nil && err.Error() != "Limit need to be greater than 0" {
+		if err != nil && err.Error() != "limit need to be greater than 0" {
 			t.Errorf(
 				"Error msg not good \nwe need : %s \nand we get: %s\n",
-				"Limit need to be greater than 0",
+				"limit need to be greater than 0",
 				err.Error(),
 			)
 		}
@@ -80,10 +80,10 @@ func TestFizzBuzzHelper(t *testing.T) {
 		if err == nil {
 			t.Errorf("Error must not be nil")
 		}
-		if err != nil && err.Error() != "Str1 need to be filled" {
+		if err != nil && err.Error() != "str1 need to be filled" {
 			t.Errorf(
 				"Error msg not good \nwe need : %s \nand we get: %s\n",
-				"Str1 need to be filled",
+				"str1 need to be filled",
 				err.Error(),
 			)
 		}
@@ -101,10 +101,10 @@ func TestFizzBuzzHelper(t *testing.T) {
 		if err == nil {
 			t.Errorf("Error must not be nil")
 		}
-		if err != nil && err.Error() != "Str2 need to be filled" {
+		if err != nil && err.Error() != "str2 need to be filled" {
 			t.Errorf(
 				"Error msg not good \nwe need : %s \nand we get: %s\n",
-				"Str2 need to be filled",
+				"str2 need to be filled",
 				err.Error(),
 			)
 		}

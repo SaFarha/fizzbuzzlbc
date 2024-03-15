@@ -61,13 +61,14 @@ une collection postman est disponible à la racine du projet -> `fizzbuzz_collec
 
 ## Lancement du projet
 
-Le projet se lance de la façon suivante :
+En local le projet se lance de la façon suivante :
 ```shell
-# directement à la racine du projet
-go run main.go
+# /!\ IMPORTANT
+# dabord executer la commande suivante pour lancer les docker en local
+make doker
 
-# Via docker
-make docker-run
+# une fois que le docker de la base de donnee run
+make run-dev
 ```
 
 ## Test

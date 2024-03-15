@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres:13-alpine
+    container_name: postgres-fizzbuzzlbc-api-test
+    ports:
+      - 5433:5432
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: fizzbuzzlbc-api-test
+    volumes:
+      - ./tmp/db-data:/var/lib/postgresql/data

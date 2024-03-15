@@ -2,6 +2,9 @@ package server
 
 import (
 	"context"
+	"fizzbuzzlbc/configuration"
+	"fizzbuzzlbc/database"
+	"fizzbuzzlbc/handler"
 	"net/http"
 )
 
@@ -17,16 +20,25 @@ type server struct {
 
 // NewServer initialize a new Server interface.
 // it takes the port to listen.
-func NewServer(port string) Server {
+func NewServer(config configuration.Configuration) (Server, error) {
 
 	ret := server{
 		server: &http.Server{},
 	}
 
-	ret.server.Addr = ":" + port
-	ret.setupRouting()
+	// new database
+	db, err := database.InitDatabase(config)
+	if nil != err {
+		return nil, err
+	}
 
-	return &ret
+	handlers := handler.NewHandlers(db)
+
+	ret.server.Addr = ":" + config.Port
+
+	ret.setupRouting(handlers)
+
+	return &ret, nil
 }
 
 // Listen is an encapsulation of the function server.ListenAndServe.

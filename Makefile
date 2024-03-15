@@ -28,7 +28,11 @@ build:	deps
        		-tags=jsoniter -o target/app .
 
 docker: build
+		docker-compose up -d
 		docker build -t app .
 
 docker-run: docker
 		docker run -it -p 8080:8080 app
+
+run-dev: docker
+		go run main.go

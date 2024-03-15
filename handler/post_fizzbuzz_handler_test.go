@@ -4,7 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fizzbuzzlbc/database/models"
 	"fizzbuzzlbc/helper"
+	"fizzbuzzlbc/mocks"
+	"fizzbuzzlbc/repositories"
 	testutils "fizzbuzzlbc/test_utils"
 	"io"
 	"net/http"
@@ -15,11 +18,17 @@ import (
 
 func TestPostFizzbuzzHandler(t *testing.T) {
 
+	handlers := &Handlers{
+		ParamRequestRepo: &mocks.FzParamRequestRepository{},
+		RequestStatRepo:  &mocks.FzRequestStatsRepository{},
+	}
+
 	// Mock function
 	oldIoutilReadAll := ioutilReadAllPostFizzbuzzHandler
 	oldJSONUnmarshall := jsonUnmarshallPostFizzbuzzHandler
 	oldHelperFizzBuzz := helperFizzbuzzPostFizzbuzzHandler
 	oldJSONMarshall := jsonMarshallPostFizzbuzzHandler
+	oldAddRequestStat := helperFizzbuzzPostAddRequestStatisticHelper
 
 	// value for test
 	res := testutils.NewMockHTTPResponseWriter()
@@ -39,7 +48,7 @@ func TestPostFizzbuzzHandler(t *testing.T) {
 			return nil, errors.New("error read all")
 		}
 
-		PostFizzbuzzHandler(res, req)
+		handlers.PostFizzbuzzHandler(res, req)
 
 		if res.Header().Get("status") != strconv.Itoa(http.StatusInternalServerError) {
 			t.Errorf("error read all failed, status not match \nwe need : %s \nand we get: %s\n",
@@ -57,7 +66,7 @@ func TestPostFizzbuzzHandler(t *testing.T) {
 			return nil, nil
 		}
 
-		PostFizzbuzzHandler(res, req)
+		handlers.PostFizzbuzzHandler(res, req)
 
 		if res.Header().Get("status") != strconv.Itoa(http.StatusBadRequest) {
 			t.Errorf("error read all missing body, status not match \nwe need : %s \nand we get: %s\n",
@@ -78,7 +87,7 @@ func TestPostFizzbuzzHandler(t *testing.T) {
 			return errors.New("json unmarshal failed")
 		}
 
-		PostFizzbuzzHandler(res, req)
+		handlers.PostFizzbuzzHandler(res, req)
 
 		if res.Header().Get("status") != strconv.Itoa(http.StatusInternalServerError) {
 			t.Errorf("error json unmarshall body, status not match \nwe need : %s \nand we get: %s\n",
@@ -95,6 +104,10 @@ func TestPostFizzbuzzHandler(t *testing.T) {
 
 	// params Limit null
 	{
+		helperFizzbuzzPostAddRequestStatisticHelper = func(prRepo repositories.FzParamRequestRepository, rsRepo repositories.FzRequestStatsRepository, data models.FzParamRequest) error {
+			return nil
+		}
+
 		postBody, _ := json.Marshal(map[string]interface{}{
 			"int1": 3,
 			"int2": 5,
@@ -104,7 +117,7 @@ func TestPostFizzbuzzHandler(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "http://localhost:8080", bytes.NewBuffer(postBody))
 		req.Header.Add("Content-Type", "application/json")
 
-		PostFizzbuzzHandler(res, req)
+		handlers.PostFizzbuzzHandler(res, req)
 
 		if res.Header().Get("status") != strconv.Itoa(http.StatusBadRequest) {
 			t.Errorf("error params limit is null, status not match \nwe need : %s \nand we get: %s\n",
@@ -126,7 +139,7 @@ func TestPostFizzbuzzHandler(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "http://localhost:8080", bytes.NewBuffer(postBody))
 		req.Header.Add("Content-Type", "application/json")
 
-		PostFizzbuzzHandler(res, req)
+		handlers.PostFizzbuzzHandler(res, req)
 
 		if res.Header().Get("status") != strconv.Itoa(http.StatusBadRequest) {
 			t.Errorf("error params limit is null, status not match \nwe need : %s \nand we get: %s\n",
@@ -148,7 +161,7 @@ func TestPostFizzbuzzHandler(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "http://localhost:8080", bytes.NewBuffer(postBody))
 		req.Header.Add("Content-Type", "application/json")
 
-		PostFizzbuzzHandler(res, req)
+		handlers.PostFizzbuzzHandler(res, req)
 
 		if res.Header().Get("status") != strconv.Itoa(http.StatusBadRequest) {
 			t.Errorf("error params int1 is null, status not match \nwe need : %s \nand we get: %s\n",
@@ -170,7 +183,7 @@ func TestPostFizzbuzzHandler(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "http://localhost:8080", bytes.NewBuffer(postBody))
 		req.Header.Add("Content-Type", "application/json")
 
-		PostFizzbuzzHandler(res, req)
+		handlers.PostFizzbuzzHandler(res, req)
 
 		if res.Header().Get("status") != strconv.Itoa(http.StatusBadRequest) {
 			t.Errorf("error params int2 is null, status not match \nwe need : %s \nand we get: %s\n",
@@ -192,7 +205,7 @@ func TestPostFizzbuzzHandler(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "http://localhost:8080", bytes.NewBuffer(postBody))
 		req.Header.Add("Content-Type", "application/json")
 
-		PostFizzbuzzHandler(res, req)
+		handlers.PostFizzbuzzHandler(res, req)
 
 		if res.Header().Get("status") != strconv.Itoa(http.StatusBadRequest) {
 			t.Errorf("error params str1 is null, status not match \nwe need : %s \nand we get: %s\n",
@@ -214,7 +227,7 @@ func TestPostFizzbuzzHandler(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "http://localhost:8080", bytes.NewBuffer(postBody))
 		req.Header.Add("Content-Type", "application/json")
 
-		PostFizzbuzzHandler(res, req)
+		handlers.PostFizzbuzzHandler(res, req)
 
 		if res.Header().Get("status") != strconv.Itoa(http.StatusBadRequest) {
 			t.Errorf("error params str2 is null, status not match \nwe need : %s \nand we get: %s\n",
@@ -234,7 +247,7 @@ func TestPostFizzbuzzHandler(t *testing.T) {
 			return nil, errors.New("helper fizz buzz failed")
 		}
 
-		PostFizzbuzzHandler(res, req)
+		handlers.PostFizzbuzzHandler(res, req)
 
 		if res.Header().Get("status") != strconv.Itoa(http.StatusBadRequest) {
 			t.Errorf("error helper failed, status not match \nwe need : %s \nand we get: %s\n",
@@ -256,7 +269,7 @@ func TestPostFizzbuzzHandler(t *testing.T) {
 			return nil, errors.New("json marshall failed")
 		}
 
-		PostFizzbuzzHandler(res, req)
+		handlers.PostFizzbuzzHandler(res, req)
 
 		if res.Header().Get("status") != strconv.Itoa(http.StatusInternalServerError) {
 			t.Errorf("error json marshall failed, status not match \nwe need : %s \nand we get: %s\n",
@@ -274,7 +287,7 @@ func TestPostFizzbuzzHandler(t *testing.T) {
 
 	// Test OK
 	{
-		PostFizzbuzzHandler(res, req)
+		handlers.PostFizzbuzzHandler(res, req)
 
 		if res.Header().Get("status") != strconv.Itoa(http.StatusOK) {
 			t.Errorf("test ok, status not match \nwe need : %s \nand we get: %s\n",
@@ -282,4 +295,6 @@ func TestPostFizzbuzzHandler(t *testing.T) {
 				res.Header().Get("status"))
 		}
 	}
+
+	helperFizzbuzzPostAddRequestStatisticHelper = oldAddRequestStat
 }

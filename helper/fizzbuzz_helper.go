@@ -18,23 +18,23 @@ type FizzBuzzHelperParams struct {
 func FizzBuzzHelper(params FizzBuzzHelperParams) ([]string, error) {
 
 	if params.Int1 == 0 {
-		return nil, errors.New("Int1 need to be greater than 0")
+		return nil, errors.New("int1 need to be greater than 0")
 	}
 
 	if params.Int2 == 0 {
-		return nil, errors.New("Int2 need to be greater than 0")
+		return nil, errors.New("int2 need to be greater than 0")
 	}
 
 	if params.Limit == 0 {
-		return nil, errors.New("Limit need to be greater than 0")
+		return nil, errors.New("limit need to be greater than 0")
 	}
 
 	if params.Str1 == "" {
-		return nil, errors.New("Str1 need to be filled")
+		return nil, errors.New("str1 need to be filled")
 	}
 
 	if params.Str2 == "" {
-		return nil, errors.New("Str2 need to be filled")
+		return nil, errors.New("str2 need to be filled")
 	}
 
 	var i uint64

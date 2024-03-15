@@ -7,8 +7,13 @@ import (
 
 func main() {
 
-	if err := application.NewApplication().Run(); nil != err {
-		log.Fatal()
+	app, err := application.NewApplication()
+	if nil != err {
+		log.Fatal(err)
+	}
+
+	if err := app.Run(); nil != err {
+		log.Fatal(err)
 	}
 
 }

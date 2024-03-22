@@ -5,6 +5,7 @@ import (
 	"fizzbuzzlbc/database/models"
 	"fizzbuzzlbc/helper"
 	"fizzbuzzlbc/utils"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"sync"
@@ -76,7 +77,7 @@ func (handler *Handlers) PostFizzbuzzHandler(response http.ResponseWriter, reque
 			Str2:  *params.Str2,
 		})
 		if nil != err {
-			// log
+			fmt.Println("Error create statistics")
 		}
 	}()
 

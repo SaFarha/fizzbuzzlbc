@@ -33,7 +33,6 @@ func (handler *Handlers) StatisticHandler(response http.ResponseWriter, request 
 	stat, err := helperGetMaxFzRequestStat(handler.ParamRequestRepo, handler.RequestStatRepo)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			println("toto")
 			utils.HTTPResponseErrorInJSON(response, http.StatusNotFound, "Stats not found")
 			return
 		}
